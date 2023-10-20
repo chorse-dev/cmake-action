@@ -1,0 +1,101 @@
+name: 'CMake Action'
+description: 'Build a CMake Project'
+inputs:
+  cmake-generator:
+    description: 'Specify a build system generator'
+    required: false
+    default: 'Unix Makefiles'
+  coverage-command:
+    description: 'Command-line tool to perform software coverage analysis'
+    required: false
+    default: ''
+  memorycheck-type:
+    description: 'Specify the type of memory checking to perform'
+    required: false
+    default: ''
+outputs:
+   build-errors:
+     description: "Store the number of build errors detected"
+     value: ${{ steps.main.outputs.build-errors }}
+   build-warnings:
+     description: "Store the number of build warnings detected"
+     value: ${{ steps.main.outputs.build-warnings }}
+   memcheck-defects:
+     description: "Store the number of memcheck defects found"
+     value: ${{ steps.main.outputs.memcheck-defects }}
+runs:
+  using: "composite"
+  steps:
+    - id: main
+      shell: ctest --build-config Debug --verbose --script {0}
+      run: |
+        cmake_minimum_required(VERSION 3.27)
+
+        site_name(CTEST_SITE)
+        set(CTEST_SOURCE_DIRECTORY "$ENV{GITHUB_WORKSPACE}")
+        set(CTEST_BINARY_DIRECTORY "$ENV{GITHUB_WORKSPACE}/build")
+        set(CTEST_CMAKE_GENERATOR "${{ inputs.cmake-generator }}")
+        set(CTEST_COVERAGE_COMMAND "${{ inputs.coverage-command }}")
+        set(CTEST_MEMORYCHECK_TYPE "${{ inputs.memorycheck-type }}")
+        set(CTEST_SUBMIT_URL "${{ inputs.submit-url }}")
+        set(CTEST_UPDATE_VERSION_ONLY ON)
+        find_program(CTEST_GIT_COMMAND git)
+
+        cmake_host_system_information(RESULT NPROC QUERY NUMBER_OF_LOGICAL_CORES)
+
+        ctest_start("Experimental")
+        if(CTEST_SUBMIT_URL)
+          ctest_submit(PARTS "Start")
+        endif()
+
+        ctest_update()
+        if(CTEST_SUBMIT_URL)
+          ctest_submit(PARTS "Update")
+        endif()
+
+        ctest_configure()
+        if(CTEST_SUBMIT_URL)
+          ctest_submit(PARTS "Configure")
+        endif()
+
+        ctest_build(
+          PARALLEL_LEVEL ${NPROC}
+          NUMBER_ERRORS build_errors
+          NUMBER_WARNINGS build_warnings
+          )
+        file(APPEND $ENV{GITHUB_OUTPUT}
+          "build-errors=${build_errors}\n"
+          "build-warnings=${build_warnings}\n"
+          )
+        if(CTEST_SUBMIT_URL)
+          ctest_submit(PARTS "Build")
+        endif()
+
+        if(CTEST_MEMORYCHECK_TYPE)
+          ctest_memcheck(
+            PARALLEL_LEVEL ${NPROC}
+            DEFECT_COUNT memcheck_defects
+            )
+          file(APPEND $ENV{GITHUB_OUTPUT}
+            "memcheck-defects=${memcheck_defects}\n"
+            )
+          if(CTEST_SUBMIT_URL)
+            ctest_submit(PARTS "MemCheck")
+          endif()
+        else()
+          ctest_test(PARALLEL_LEVEL ${NPROC})
+          if(CTEST_SUBMIT_URL)
+            ctest_submit(PARTS "Test")
+          endif()
+        endif()
+
+        if(CTEST_COVERAGE_COMMAND)
+          ctest_coverage()
+          if(CTEST_SUBMIT_URL)
+            ctest_submit(PARTS "Coverage")
+          endif()
+        endif()
+
+        if(CTEST_SUBMIT_URL)
+          ctest_submit(PARTS "Done")
+        endif()
