@@ -27,7 +27,7 @@ runs:
   using: "composite"
   steps:
     - id: main
-      shell: ctest --build-config Debug --verbose --script {0}
+      shell: ctest --build-config Debug --extra-verbose --script {0}
       run: |
         cmake_minimum_required(VERSION 3.27)
 
