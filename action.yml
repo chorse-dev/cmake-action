@@ -29,7 +29,7 @@ runs:
     - id: main
       shell: ctest --build-config Debug --extra-verbose --script {0}
       run: |
-        cmake_minimum_required(VERSION 3.27)
+        cmake_minimum_required(VERSION 3.14)
 
         site_name(CTEST_SITE)
         set(CTEST_SOURCE_DIRECTORY "$ENV{GITHUB_WORKSPACE}")
