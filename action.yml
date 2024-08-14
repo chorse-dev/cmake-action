@@ -13,6 +13,10 @@ inputs:
     description: 'Specify the type of memory checking to perform'
     required: false
     default: ''
+  submit-url:
+    description: 'The URL of the dashboard server to send the submission to'
+    required: false
+    default: ''
 outputs:
    build-errors:
      description: "Store the number of build errors detected"
@@ -44,20 +48,20 @@ runs:
 
         cmake_host_system_information(RESULT NPROC QUERY NUMBER_OF_LOGICAL_CORES)
 
+        function(submit part)
+          if(CTEST_SUBMIT_URL)
+            ctest_submit(PARTS "${part}")
+          endif()
+        endfunction()
+
         ctest_start("Experimental")
-        if(CTEST_SUBMIT_URL)
-          ctest_submit(PARTS "Start")
-        endif()
+        submit("Start")
 
         ctest_update()
-        if(CTEST_SUBMIT_URL)
-          ctest_submit(PARTS "Update")
-        endif()
+        submit("Update")
 
         ctest_configure()
-        if(CTEST_SUBMIT_URL)
-          ctest_submit(PARTS "Configure")
-        endif()
+        submit("Configure")
 
         ctest_build(
           PARALLEL_LEVEL ${NPROC}
@@ -68,9 +72,7 @@ runs:
           "build-errors=${build_errors}\n"
           "build-warnings=${build_warnings}\n"
           )
-        if(CTEST_SUBMIT_URL)
-          ctest_submit(PARTS "Build")
-        endif()
+        submit("Build")
 
         if(CTEST_MEMORYCHECK_TYPE)
           ctest_memcheck(
@@ -80,23 +82,15 @@ runs:
           file(APPEND $ENV{GITHUB_OUTPUT}
             "memcheck-defects=${memcheck_defects}\n"
             )
-          if(CTEST_SUBMIT_URL)
-            ctest_submit(PARTS "MemCheck")
-          endif()
+          submit("MemCheck")
         else()
           ctest_test(PARALLEL_LEVEL ${NPROC})
-          if(CTEST_SUBMIT_URL)
-            ctest_submit(PARTS "Test")
-          endif()
+          submit("Test")
         endif()
 
         if(CTEST_COVERAGE_COMMAND)
           ctest_coverage()
-          if(CTEST_SUBMIT_URL)
-            ctest_submit(PARTS "Coverage")
-          endif()
+          submit("Coverage")
         endif()
 
-        if(CTEST_SUBMIT_URL)
-          ctest_submit(PARTS "Done")
-        endif()
+        submit("Done")
