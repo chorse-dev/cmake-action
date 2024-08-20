@@ -1,5 +1,9 @@
-name: 'CMake Action'
-description: 'Build a CMake Project'
+name: 'CMake - Build and Test'
+author: Daniel Pfeifer
+description: 'Build and Test any CMake Project'
+branding:
+  icon: "compass"
+  color: "orange"
 inputs:
   cmake-generator:
     description: 'Specify a build system generator'
