@@ -9,6 +9,10 @@ inputs:
     description: 'Command-line tool to perform software coverage analysis'
     required: false
     default: ''
+  memorycheck-command:
+    description: 'Command-line tool to perform dynamic analysis'
+    required: false
+    default: ''
   memorycheck-type:
     description: 'Specify the type of memory checking to perform'
     required: false
@@ -41,6 +45,7 @@ runs:
         set(CTEST_BINARY_DIRECTORY "$ENV{GITHUB_WORKSPACE}/build")
         set(CTEST_CMAKE_GENERATOR "${{ inputs.cmake-generator }}")
         set(CTEST_COVERAGE_COMMAND "${{ inputs.coverage-command }}")
+        set(CTEST_MEMORYCHECK_COMMAND "${{ inputs.memorycheck-command }}")
         set(CTEST_MEMORYCHECK_TYPE "${{ inputs.memorycheck-type }}")
         set(CTEST_SUBMIT_URL "${{ inputs.submit-url }}")
         set(CTEST_UPDATE_VERSION_ONLY ON)
@@ -74,7 +79,7 @@ runs:
           )
         submit("Build")
 
-        if(CTEST_MEMORYCHECK_TYPE)
+        if(CTEST_MEMORYCHECK_COMMAND OR CTEST_MEMORYCHECK_TYPE)
           ctest_memcheck(
             PARALLEL_LEVEL ${NPROC}
             DEFECT_COUNT memcheck_defects
