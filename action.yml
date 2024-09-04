@@ -44,7 +44,7 @@ runs:
         cmake_minimum_required(VERSION 3.14)
 
         site_name(CTEST_SITE)
-        set(CTEST_BUILD_NAME "${{ github.run_id }}")
+        set(CTEST_BUILD_NAME "${{ github.job }}")
         set(CTEST_SOURCE_DIRECTORY "$ENV{GITHUB_WORKSPACE}")
         set(CTEST_BINARY_DIRECTORY "$ENV{GITHUB_WORKSPACE}/build")
         set(CTEST_CMAKE_GENERATOR "${{ inputs.cmake-generator }}")
