@@ -53,8 +53,6 @@ runs:
         set(CTEST_MEMORYCHECK_COMMAND "${{ inputs.memorycheck-command }}")
         set(CTEST_MEMORYCHECK_TYPE "${{ inputs.memorycheck-type }}")
         set(CTEST_SUBMIT_URL "${{ inputs.submit-url }}")
-        set(CTEST_UPDATE_VERSION_ONLY ON)
-        find_program(CTEST_GIT_COMMAND git)
 
         cmake_host_system_information(RESULT NPROC QUERY NUMBER_OF_LOGICAL_CORES)
 
@@ -66,9 +64,6 @@ runs:
 
         ctest_start("Experimental")
         submit("Start")
-
-        ctest_update()
-        submit("Update")
 
         ctest_configure()
         submit("Configure")
