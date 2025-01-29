@@ -1,51 +1,55 @@
-name: 'CMake - Build and Test'
+name: CMake - Build and Test
 author: Daniel Pfeifer
-description: 'Build and Test any CMake Project'
+description: Build and Test any CMake Project
 branding:
-  icon: "compass"
-  color: "orange"
+  icon: compass
+  color: orange
 inputs:
+  build-name:
+    description: Describe the dashboard client platform with a short string.
+    required: false
+    default: ${{ github.job }}
   cmake-generator:
-    description: 'Specify a build system generator'
+    description: Specify a build system generator
     required: false
-    default: 'Unix Makefiles'
+    default: Unix Makefiles
   coverage-command:
-    description: 'Command-line tool to perform software coverage analysis'
+    description: Command-line tool to perform software coverage analysis
     required: false
-    default: ''
+    default: ""
   memorycheck-command:
-    description: 'Command-line tool to perform dynamic analysis'
+    description: Command-line tool to perform dynamic analysis
     required: false
-    default: ''
+    default: ""
   memorycheck-type:
-    description: 'Specify the type of memory checking to perform'
+    description: Specify the type of memory checking to perform
     required: false
-    default: ''
+    default: ""
   submit-url:
-    description: 'The URL of the dashboard server to send the submission to'
+    description: The URL of the dashboard server to send the submission to
     required: false
-    default: ''
+    default: ""
 outputs:
-   build-errors:
-     description: "Store the number of build errors detected"
-     value: ${{ steps.main.outputs.build-errors }}
-   build-warnings:
-     description: "Store the number of build warnings detected"
-     value: ${{ steps.main.outputs.build-warnings }}
-   memcheck-defects:
-     description: "Store the number of memcheck defects found"
-     value: ${{ steps.main.outputs.memcheck-defects }}
+  build-errors:
+    description: Store the number of build errors detected
+    value: ${{ steps.main.outputs.build-errors }}
+  build-warnings:
+    description: Store the number of build warnings detected
+    value: ${{ steps.main.outputs.build-warnings }}
+  memcheck-defects:
+    description: Store the number of memcheck defects found
+    value: ${{ steps.main.outputs.memcheck-defects }}
 runs:
-  using: "composite"
+  using: composite
   steps:
     - id: main
-      shell: ctest --build-config Debug --extra-verbose --script {0}
+      shell: ctest --build-config Debug --verbose --script {0}
       run: |
         cmake_minimum_required(VERSION 3.14)
 
         set(CTEST_SITE "github.com")
         set(CTEST_CHANGE_ID "${{ github.sha }}")
-        set(CTEST_BUILD_NAME "${{ github.job }}")
+        set(CTEST_BUILD_NAME "${{ inputs.build-name }}")
         set(CTEST_SOURCE_DIRECTORY "$ENV{GITHUB_WORKSPACE}")
         set(CTEST_BINARY_DIRECTORY "$ENV{GITHUB_WORKSPACE}/build")
         set(CTEST_CMAKE_GENERATOR "${{ inputs.cmake-generator }}")
