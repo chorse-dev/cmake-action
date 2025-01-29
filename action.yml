@@ -29,6 +29,10 @@ inputs:
     description: The URL of the dashboard server to send the submission to
     required: false
     default: ""
+  use-launchers:
+    description: Use the CTest script mode to run tests
+    required: false
+    default: OFF
 outputs:
   build-errors:
     description: Store the number of build errors detected
@@ -57,6 +61,7 @@ runs:
         set(CTEST_MEMORYCHECK_COMMAND "${{ inputs.memorycheck-command }}")
         set(CTEST_MEMORYCHECK_TYPE "${{ inputs.memorycheck-type }}")
         set(CTEST_SUBMIT_URL "${{ inputs.submit-url }}")
+        set(CTEST_USE_LAUNCHERS "${{ inputs.use-launchers }}")
 
         cmake_host_system_information(RESULT NPROC QUERY NUMBER_OF_LOGICAL_CORES)
 
