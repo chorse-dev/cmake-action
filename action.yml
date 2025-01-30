@@ -13,6 +13,10 @@ inputs:
     description: Specify a build system generator
     required: false
     default: Unix Makefiles
+  config-options:
+    description: Specify command-line arguments to pass to the configuration tool.
+    required: false
+    default: ""
   coverage-command:
     description: Command-line tool to perform software coverage analysis
     required: false
@@ -74,7 +78,8 @@ runs:
         ctest_start("Experimental")
         submit("Start")
 
-        ctest_configure()
+        set(config_options ${{ inputs.config-options }})
+        ctest_configure(OPTIONS "${config_options}")
         submit("Configure")
 
         ctest_build(
