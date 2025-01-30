@@ -75,7 +75,7 @@ runs:
           endif()
         endfunction()
 
-        ctest_start("Experimental")
+        ctest_start("Experimental" GROUP "${{ github.event_name }}")
         submit("Start")
 
         set(config_options ${{ inputs.config-options }})
