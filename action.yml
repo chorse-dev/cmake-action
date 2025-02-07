@@ -9,6 +9,10 @@ inputs:
     description: Describe the dashboard client platform with a short string.
     required: false
     default: ${{ github.job }}
+  change-id:
+    description: Pass arbitrary information about this build to the dashboard.
+    required: false
+    default: ${{ github.sha }}
   cmake-generator:
     description: Specify a build system generator
     required: false
@@ -56,8 +60,8 @@ runs:
         cmake_minimum_required(VERSION 3.14)
 
         set(CTEST_SITE "github.com")
-        set(CTEST_CHANGE_ID "${{ github.sha }}")
         set(CTEST_BUILD_NAME "${{ inputs.build-name }}")
+        set(CTEST_CHANGE_ID "${{ inputs.change-id }}")
         set(CTEST_SOURCE_DIRECTORY "$ENV{GITHUB_WORKSPACE}")
         set(CTEST_BINARY_DIRECTORY "$ENV{GITHUB_WORKSPACE}/build")
         set(CTEST_CMAKE_GENERATOR "${{ inputs.cmake-generator }}")
