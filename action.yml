@@ -16,7 +16,7 @@ inputs:
   cmake-generator:
     description: Specify a build system generator
     required: false
-    default: Unix Makefiles
+    default: Ninja Multi-Config
   config-options:
     description: Specify command-line arguments to pass to the configuration tool.
     required: false
