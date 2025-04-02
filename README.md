@@ -8,17 +8,21 @@ Unlike other "cmake-action" implementations, this action does not provide custom
 wrappers for the [`cmake`](https://cmake.org/cmake/help/latest/manual/cmake.1.html)
 command-line, but instead builds on top of CTest's
 [scripting](https://cmake.org/cmake/help/latest/manual/ctest.1.html#dashboard-client-via-ctest-script)
-capabilities. 
+capabilities.
 
 ## Available Inputs
 
 | Name | Description |
 | --- | --- |
+| `build-name` | Describe the dashboard client platform with a short string |
+| `change-id` | Pass arbitrary information about this build to the dashboard |
 | `cmake-generator` | Specify a build system generator |
+| `config-options` | Specify command-line arguments to pass to the configuration tool |
 | `coverage-command` | Command-line tool to perform software coverage analysis |
 | `memorycheck-command` | Command-line tool to perform dynamic analysis |
 | `memorycheck-type` | Specify the type of memory checking to perform |
 | `submit-url` | The URL of the dashboard server to send the submission to |
+| `use-launchers` | Report granular build warning and error information |
 
 ## Available Outputs
 
@@ -47,7 +51,6 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - uses: seanmiddleditch/gha-setup-ninja@master
       - uses: purpleKarrot/cmake-action@master
         with:
           cmake-generator: Ninja
