@@ -38,9 +38,9 @@ inputs:
     required: false
     default: ""
   use-launchers:
-    description: Use the CTest script mode to run tests
+    description: Report granular build warning and error information
     required: false
-    default: OFF
+    default: ON
 outputs:
   build-errors:
     description: Store the number of build errors detected
@@ -55,6 +55,10 @@ runs:
   using: composite
   steps:
     - id: main
+      env:
+        CTEST_USE_INSTRUMENTATION: 1
+        CTEST_USE_VERBOSE_INSTRUMENTATION: 1
+        CTEST_EXPERIMENTAL_INSTRUMENTATION: a37d1069-1972-4901-b9c9-f194aaf2b6e0
       shell: ctest --build-config Debug --verbose --script {0}
       run: |
         cmake_minimum_required(VERSION 3.14)
