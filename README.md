@@ -45,13 +45,13 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - uses: purpleKarrot/cmake-action@master
+      - uses: chorse-dev/cmake-action@master
   Ubuntu-Ninja:
     name: Ubuntu - Ninja
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - uses: purpleKarrot/cmake-action@master
+      - uses: chorse-dev/cmake-action@master
         with:
           cmake-generator: Ninja
   MacOS:
@@ -59,7 +59,7 @@ jobs:
     runs-on: macos-latest
     steps:
       - uses: actions/checkout@v4
-      - uses: purpleKarrot/cmake-action@master
+      - uses: chorse-dev/cmake-action@master
         with:
           cmake-generator: Xcode
   Windows:
@@ -67,7 +67,7 @@ jobs:
     runs-on: windows-2022
     steps:
       - uses: actions/checkout@v4
-      - uses: purpleKarrot/cmake-action@master
+      - uses: chorse-dev/cmake-action@master
         with:
           cmake-generator: Visual Studio 17 2022
 ```
@@ -84,7 +84,7 @@ env:
   CXXFLAGS: --coverage
 steps:
   - uses: actions/checkout@v4
-  - uses: purpleKarrot/cmake-action@master
+  - uses: chorse-dev/cmake-action@master
     with:
       coverage-command: gcov
 ```
@@ -100,7 +100,7 @@ env:
   CXXFLAGS: -fno-omit-frame-pointer -fsanitize=address
 steps:
   - uses: actions/checkout@v4
-  - uses: purpleKarrot/cmake-action@master
+  - uses: chorse-dev/cmake-action@master
     with:
       memorycheck-type: AddressSanitizer
 ```
@@ -110,7 +110,7 @@ steps:
 Results may be sent to a dashboard server:
 
 ```yaml
-- uses: purpleKarrot/cmake-action@master
+- uses: chorse-dev/cmake-action@master
   with:
-    submit-url: https://open.cdash.org/submit.php?project=MyProject
+    submit-url: https://chorse.dev/submit.php?project=MyProject
 ```
