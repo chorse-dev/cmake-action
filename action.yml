@@ -72,23 +72,20 @@ runs:
         set(CTEST_COVERAGE_COMMAND "${{ inputs.coverage-command }}")
         set(CTEST_MEMORYCHECK_COMMAND "${{ inputs.memorycheck-command }}")
         set(CTEST_MEMORYCHECK_TYPE "${{ inputs.memorycheck-type }}")
-        set(CTEST_SUBMIT_URL "${{ inputs.submit-url }}")
         set(CTEST_USE_LAUNCHERS "${{ inputs.use-launchers }}")
 
         cmake_host_system_information(RESULT NPROC QUERY NUMBER_OF_LOGICAL_CORES)
 
-        function(submit part)
-          if(CTEST_SUBMIT_URL)
-            ctest_submit(PARTS "${part}")
-          endif()
-        endfunction()
+        if(NOT "${{ inputs.submit-url }}" STREQUAL "")
+          set(CTEST_SUBMIT_URL "${{ inputs.submit-url }}")
+        endif()
 
         ctest_start("Experimental" GROUP "${{ github.event_name }}")
-        submit("Start")
+        ctest_submit(PARTS "Start")
 
         set(config_options ${{ inputs.config-options }})
         ctest_configure(OPTIONS "${config_options}")
-        submit("Configure")
+        ctest_submit(PARTS "Configure")
 
         ctest_build(
           PARALLEL_LEVEL ${NPROC}
@@ -99,7 +96,7 @@ runs:
           "build-errors=${build_errors}\n"
           "build-warnings=${build_warnings}\n"
           )
-        submit("Build")
+        ctest_submit(PARTS "Build")
 
         if(CTEST_MEMORYCHECK_COMMAND OR CTEST_MEMORYCHECK_TYPE)
           ctest_memcheck(
@@ -109,15 +106,15 @@ runs:
           file(APPEND $ENV{GITHUB_OUTPUT}
             "memcheck-defects=${memcheck_defects}\n"
             )
-          submit("MemCheck")
+          ctest_submit(PARTS "MemCheck")
         else()
           ctest_test(PARALLEL_LEVEL ${NPROC})
-          submit("Test")
+          ctest_submit(PARTS "Test")
         endif()
 
         if(CTEST_COVERAGE_COMMAND)
           ctest_coverage()
-          submit("Coverage")
+          ctest_submit(PARTS "Coverage")
         endif()
 
-        submit("Done")
+        ctest_submit(PARTS "Done")
