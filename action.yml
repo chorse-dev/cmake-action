@@ -76,12 +76,11 @@ runs:
 
         cmake_host_system_information(RESULT NPROC QUERY NUMBER_OF_LOGICAL_CORES)
 
+        ctest_start("Experimental" GROUP "${{ github.event_name }}")
+
         if(NOT "${{ inputs.submit-url }}" STREQUAL "")
           set(CTEST_SUBMIT_URL "${{ inputs.submit-url }}")
         endif()
-
-        ctest_start("Experimental" GROUP "${{ github.event_name }}")
-        ctest_submit(PARTS "Start")
 
         set(config_options ${{ inputs.config-options }})
         ctest_configure(OPTIONS "${config_options}")
