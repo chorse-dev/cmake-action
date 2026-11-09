@@ -21,6 +21,8 @@ capabilities.
 | `coverage-command` | Command-line tool to perform software coverage analysis |
 | `memorycheck-command` | Command-line tool to perform dynamic analysis |
 | `memorycheck-type` | Specify the type of memory checking to perform |
+| `model` | CTest dashboard model: `Experimental` (default), `Continuous`, or `Nightly` |
+| `nightly-start-time` | Start of the Nightly reporting day, including time zone; defaults to `00:00:00 UTC` |
 | `submit-url` | The URL of the dashboard server to send the submission to |
 | `use-launchers` | Report granular build warning and error information |
 
@@ -70,6 +72,23 @@ jobs:
       - uses: chorse-dev/cmake-action@master
         with:
           cmake-generator: Visual Studio 17 2022
+```
+
+### Selecting the dashboard model
+
+The `model` input selects the CTest dashboard model and submission group.
+It defaults to `Experimental`; the workflow trigger does not select the model.
+Use `Nightly` for scheduled daily builds or `Continuous` for builds triggered
+by source changes.
+
+Nightly runs share a reporting day determined by `nightly-start-time`.
+The default boundary is midnight UTC. To use a different boundary:
+
+```yaml
+- uses: chorse-dev/cmake-action@master
+  with:
+    model: Nightly
+    nightly-start-time: "06:00:00 UTC"
 ```
 
 ### Setting compiler flags

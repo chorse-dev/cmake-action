@@ -33,6 +33,14 @@ inputs:
     description: Specify the type of memory checking to perform
     required: false
     default: ""
+  model:
+    description: CTest dashboard model (Experimental, Continuous, or Nightly).
+    required: false
+    default: Experimental
+  nightly-start-time:
+    description: Start of the Nightly reporting day, including time zone.
+    required: false
+    default: "00:00:00 UTC"
   submit-url:
     description: The URL of the dashboard server to send the submission to
     required: false
@@ -58,7 +66,6 @@ runs:
       env:
         CTEST_USE_INSTRUMENTATION: 1
         CTEST_USE_VERBOSE_INSTRUMENTATION: 1
-        CTEST_EXPERIMENTAL_INSTRUMENTATION: ec7aa2dc-b87f-45a3-8022-fe01c5f59984
       shell: ctest --build-config Debug --verbose --script {0}
       run: |
         cmake_minimum_required(VERSION 3.14)
@@ -73,10 +80,11 @@ runs:
         set(CTEST_MEMORYCHECK_COMMAND "${{ inputs.memorycheck-command }}")
         set(CTEST_MEMORYCHECK_TYPE "${{ inputs.memorycheck-type }}")
         set(CTEST_USE_LAUNCHERS "${{ inputs.use-launchers }}")
+        set(CTEST_NIGHTLY_START_TIME "${{ inputs.nightly-start-time }}")
 
         cmake_host_system_information(RESULT NPROC QUERY NUMBER_OF_LOGICAL_CORES)
 
-        ctest_start("Experimental" GROUP "${{ github.event_name }}")
+        ctest_start("${{ inputs.model }}")
 
         if(NOT "${{ inputs.submit-url }}" STREQUAL "")
           set(CTEST_SUBMIT_URL "${{ inputs.submit-url }}")
