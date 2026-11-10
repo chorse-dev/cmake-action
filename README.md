@@ -19,6 +19,7 @@ capabilities.
 | `cmake-generator` | Specify a build system generator |
 | `config-options` | Specify command-line arguments to pass to the configuration tool |
 | `coverage-command` | Command-line tool to perform software coverage analysis |
+| `http-header` | Append HTTP header when submitting to the dashboard |
 | `memorycheck-command` | Command-line tool to perform dynamic analysis |
 | `memorycheck-type` | Specify the type of memory checking to perform |
 | `model` | CTest dashboard model: `Experimental` (default), `Continuous`, or `Nightly` |

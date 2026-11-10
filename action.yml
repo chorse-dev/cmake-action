@@ -25,6 +25,10 @@ inputs:
     description: Command-line tool to perform software coverage analysis
     required: false
     default: ""
+  http-header:
+    description: Append HTTP header when submitting to the dashboard
+    required: false
+    default: ""
   memorycheck-command:
     description: Command-line tool to perform dynamic analysis
     required: false
@@ -66,9 +70,9 @@ runs:
       env:
         CTEST_USE_INSTRUMENTATION: 1
         CTEST_USE_VERBOSE_INSTRUMENTATION: 1
-      shell: ctest --build-config Debug --verbose --script {0}
+      shell: 'ctest --build-config Debug --verbose --http-header "${{ inputs.http-header }}" --script {0}'
       run: |
-        cmake_minimum_required(VERSION 3.14)
+        cmake_minimum_required(VERSION 4.0)
 
         set(CTEST_SITE "github.com")
         set(CTEST_BUILD_NAME "${{ inputs.build-name }}")
