@@ -15,7 +15,7 @@ capabilities.
 | Name | Description |
 | --- | --- |
 | `build-name` | Describe the dashboard client platform with a short string |
-| `change-id` | Pass arbitrary information about this build to the dashboard |
+| `change-id` | Identify the pull request associated with this build |
 | `cmake-generator` | Specify a build system generator |
 | `config-options` | Specify command-line arguments to pass to the configuration tool |
 | `coverage-command` | Command-line tool to perform software coverage analysis |

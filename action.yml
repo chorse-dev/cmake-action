@@ -10,9 +10,9 @@ inputs:
     required: false
     default: ${{ github.job }}
   change-id:
-    description: Pass arbitrary information about this build to the dashboard.
+    description: Identify the pull request associated with this build.
     required: false
-    default: ${{ github.sha }}
+    default: ${{ github.event.pull_request.number || '' }}
   cmake-generator:
     description: Specify a build system generator
     required: false
@@ -72,7 +72,9 @@ runs:
         CTEST_USE_VERBOSE_INSTRUMENTATION: 1
       shell: 'ctest --build-config Debug --verbose --http-header "${{ inputs.http-header }}" --script {0}'
       run: |
-        cmake_minimum_required(VERSION 4.0)
+        cmake_minimum_required(VERSION 4.4)
+
+        find_package(Git REQUIRED)
 
         set(CTEST_SITE "github.com")
         set(CTEST_BUILD_NAME "${{ inputs.build-name }}")
@@ -84,6 +86,7 @@ runs:
         set(CTEST_MEMORYCHECK_COMMAND "${{ inputs.memorycheck-command }}")
         set(CTEST_MEMORYCHECK_TYPE "${{ inputs.memorycheck-type }}")
         set(CTEST_USE_LAUNCHERS "${{ inputs.use-launchers }}")
+        set(CTEST_UPDATE_COMMAND "${GIT_EXECUTABLE}")
         set(CTEST_NIGHTLY_START_TIME "${{ inputs.nightly-start-time }}")
 
         cmake_host_system_information(RESULT NPROC QUERY NUMBER_OF_LOGICAL_CORES)
@@ -93,6 +96,9 @@ runs:
         if(NOT "${{ inputs.submit-url }}" STREQUAL "")
           set(CTEST_SUBMIT_URL "${{ inputs.submit-url }}")
         endif()
+
+        ctest_update(VERSION_ONLY)
+        ctest_submit(PARTS "Update")
 
         set(config_options ${{ inputs.config-options }})
         ctest_configure(OPTIONS "${config_options}")
