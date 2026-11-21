@@ -44,7 +44,7 @@ inputs:
   nightly-start-time:
     description: Start of the Nightly reporting day, including time zone.
     required: false
-    default: "00:00:00 UTC"
+    default: "01:00:00 UTC"
   submit-url:
     description: The URL of the dashboard server to send the submission to
     required: false
